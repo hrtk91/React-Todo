@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -20,7 +21,7 @@ public class TodoController : ControllerBase
 
     [HttpGet(Name = "GetAllTodo")]
     [Produces("application/json")]
-    public async Task<ActionResult<IEnumerable<DTO.Todo>>> Get()
+    public async Task<ActionResult<IEnumerable<DTO.Todo>>> GetAll()
     {
         try
         {
@@ -34,9 +35,45 @@ public class TodoController : ControllerBase
         }
     }
 
+    [HttpGet(Name = "GetNotCompletedTodo")]
+    [Produces("application/json")]
+    public async Task<ActionResult<IEnumerable<DTO.Todo>>> GetNotCompleted()
+    {
+        try
+        {
+            var todos = (await context.Todos.Where(x => x.DoneAt == null).ToListAsync())
+                .Select(x => DTO.Todo.From(x))
+                .ToList();
+            return Ok(todos);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Todoの全取得に失敗しました。");
+            throw;
+        }
+    }
+
+    [HttpGet(Name = "GetCompletedTodo")]
+    [Produces("application/json")]
+    public async Task<ActionResult<IEnumerable<DTO.Todo>>> GetCompleted()
+    {
+        try
+        {
+            var todos = (await context.Todos.Where(x => x.DoneAt != null).ToListAsync())
+                .Select(x => DTO.Todo.From(x))
+                .ToList();
+            return Ok(todos);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Todoの全取得に失敗しました。");
+            throw;
+        }
+    }
+
     [HttpPost(Name = "CreateTodo")]
     [Produces("application/json")]
-    public async Task<IActionResult> Create(string content, DateTime dueDate)
+    public async Task<IActionResult> Create([MaxLength(100)]string content, [Required]DateTime dueDate)
     {
         if (!ModelState.IsValid)
         {
@@ -60,5 +97,55 @@ public class TodoController : ControllerBase
         }
 
         return Ok();
+    }
+
+    [HttpPatch(Name = "UpdateTodo")]
+    [Produces("application/json")]
+    public async Task<IActionResult> Update(
+        [Required]int id,
+        [MaxLength(100)]string content,
+        [Required]DateTime dueDate,
+        DateTime? DoneAt)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            var todo = await context.Todos.SingleAsync(x => x.Id == id);
+            todo.Content = content;
+            todo.DueDate = dueDate;
+            todo.DoneAt = DoneAt;
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Todoの変更に失敗しました。");
+            throw;
+        }
+
+        return Ok();
+    }
+
+    [HttpDelete(Name = "DeleteTodo")]
+    [Produces("application/json")]
+    public async Task<IActionResult> Delete(
+        [Required]int id)
+    {
+        try
+        {
+            var todo = await context.Todos.SingleAsync(x => x.Id == id);
+            context.Todos.Remove(todo);
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Todoの削除に失敗しました。");
+            throw;
+        }
+
+        return NoContent();
     }
 }
