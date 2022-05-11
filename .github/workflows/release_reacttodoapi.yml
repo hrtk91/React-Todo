@@ -7,7 +7,13 @@ on:
   push:
     branches:
       - release
+    paths:
+      - 'Server/**'
   workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: Server
 
 jobs:
   build:
@@ -23,10 +29,10 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build --project Server/Server.csproj --configuration Release
+        run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish --project Server/Server.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
