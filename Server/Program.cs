@@ -6,7 +6,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddCors(options =>
-    options.AddPolicy("ReactWebApp", policy => policy.WithOrigins("http://localhost:3000")));
+    options.AddPolicy("ReactWebApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000");
+        policy.WithHeaders(new []
+        {
+            "Content-Type",
+        });
+        policy.WithMethods(new []
+        {
+            HttpMethod.Get.ToString(),
+            HttpMethod.Post.ToString(),
+            HttpMethod.Patch.ToString(),
+            HttpMethod.Delete.ToString()
+        });
+    }));
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(
