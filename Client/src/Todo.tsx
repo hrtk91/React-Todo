@@ -1,74 +1,152 @@
-import React from 'react';
-import * as  DTO from './DTO';
+import React from 'react'
+import TodoCreater from './Components/TodoCreater'
+import TodoItem from './Components/TodoItem'
+import Todo from './Models/Todo'
+import TodoService from './Services/TodoService'
 
-export default class Todo extends
-    React.Component<{}, {
-        todos: DTO.Todo[],
-        content: string,
-        dueDate: Date,
-    }> {
+/**
+ * TodoクラスのProps型
+ */
+interface IProps {
 
-    constructor(props: {}) {
-        super(props);
+}
+
+/**
+ * TodoクラスのState型
+ */
+interface IState {
+    /** Todoのリスト */
+    todos: Todo[],
+    /**
+     * 画面に表示するTodoのフィルター種別  
+     * TodoFilterに以下の種別定義   
+     * ・NotCompleted = 未完了のみ  
+     * ・Completed = 完了のみ  
+     * ・All = すべて  
+     */
+    todoFilter: string,
+}
+
+/**
+ * IState.todoFilterで使用する種別の定義
+ */
+const TodoFilter = {
+    /** 未完了のみ */
+    NotCompleted: 'NotCompleted',
+    /** 完了のみ */
+    Completed: 'Completed',
+    /** すべて */
+    All: 'All'
+}
+
+/**
+ * Todoアプリコンポーネント
+ */
+export default class TodoApp extends
+    React.Component<IProps, IState> {
+    /** コンストラクタ */
+    constructor (props: IProps) {
+        super(props)
         this.state = {
             todos: [],
-            content: '',
-            dueDate: (new Date()),
-        };
-
-        this.addTodo = this.addTodo.bind(this);
+            todoFilter: TodoFilter.NotCompleted
+        }
     }
 
-    render() {
-        const todos = this.state.todos.map(todo => <li key={todo.id}>{todo.content}</li>);
+    /**
+     * 初期化処理  
+     * 未完了のTodoリストを取得する  
+     */
+    async componentDidMount (): Promise<void> {
+        await this.initialize()
+    }
+
+    /** レンダリング */
+    render () {
+        const todos = this.state.todos.map(todo =>
+            (
+                <article key={todo.id} className='container-fluid pt-3'>
+                    <TodoItem todo={todo} onUpdateTodo={this.onUpdateOrDeleteTodo} onDeleteTodo={this.onUpdateOrDeleteTodo}></TodoItem>
+                </article>
+            ))
         return (
             <div className='container'>
-                <div className='row'>
-                    <h1>Todo List</h1>
-                    <div className='input-group'>
-                        <textarea className='form-control' onChange={ev => this.setState({ content: ev.target.value })}></textarea>
-                        <button type='button' className='btn btn-primary' onClick={this.addTodo}>追加</button>
+                <section className='container-fluid'>
+                    <div className='row'>
+                        <h1>Todo List</h1>
                     </div>
-                    <ul>
-                        {todos}
-                    </ul>
-                    <button className='btn btn-primary' onClick={() => alert('clicked')}>Test Button</button>
-                </div>
+                </section>
+                <TodoCreater onCreatedTodo={this.onCreatedTodo} />
+                <section className='container-fluid'>
+                    <div className='row'>
+                        <div className="input-group mt-2">
+                            <label className="input-group-text">表示</label>
+                            <select className="todo-selecter form-select w-auto" onChange={this.onChangeTodoSelector}>
+                                <option value={TodoFilter.NotCompleted}>未完了のみ</option>
+                                <option value={TodoFilter.Completed}>完了のみ</option>
+                                <option value={TodoFilter.All}>すべて</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                {todos}
             </div>
         )
     }
 
-    async componentDidMount(): Promise<void> {
-        await this.initialize();
+    /**
+     * 指定フィルターに合致するTodoをサーバーから取得する  
+     * @param todoFilter フィルター種別
+     */
+    initialize = async (todoFilter?: string): Promise<void> => {
+        const filter = todoFilter ?? this.state.todoFilter
+
+        // フィルターごとに取得メソッドを変更
+        const func = filter === TodoFilter.NotCompleted
+            ? TodoService.getNotCompletedTodos
+            : (filter === TodoFilter.Completed
+                ? TodoService.getCompletedTodos
+                : TodoService.getAllTodos)
+
+        // Todoの取得
+        const todos = await func()
+
+        // 取得したTodoリストに更新
+        this.setState({ todos })
     }
 
-    async initialize(): Promise<void> {
-        const todos = await this.getAllTodos();
-        this.setState({ todos: todos });
-    }
-
-    async getAllTodos(): Promise<DTO.Todo[]> {
-        return await fetch('http://localhost:5200/Todo/GetAll', { method: 'GET', mode: 'cors' }).then(res => res.json());
-    }
-
-    async addTodo(): Promise<void> {
-        const content = this.state.content;
-        const dueDate = this.state.dueDate.toUTCString();
-
+    /**
+     * Todo作成の通知を受け取ってTodoリストを再取得する
+     */
+    onCreatedTodo = async (): Promise<void> => {
         try {
-            await fetch(`http://localhost:5200/Todo/Create?content=${content}&dueDate=${dueDate}`, { method: 'POST', mode: 'cors' });
+            await this.initialize()
+        } catch (ex) {
+            alert('Todoの再読み込みに失敗しました。\r\nページを更新してください。')
+            console.log(`Todoの初期化処理に失敗しました。\r\nex : ${ex}`)
         }
-        catch (ex) {
-            alert('Todoの追加処理に失敗しました。\r\nもう一度やり直してください。');
-            console.log(`Todoの追加処理に失敗しました。\r\nex : ${ex}`);
-        }
+    }
 
+    /**
+     * Todo更新/削除の通知を受け取ってTodoリストを再取得する
+     * @param _id 更新したTodoのId
+     */
+    onUpdateOrDeleteTodo = async (_id: number): Promise<void> => {
         try {
-            await this.initialize();
+            await this.initialize()
+        } catch (ex) {
+            alert('Todoの再読み込みに失敗しました。\r\nページを更新してください。')
+            console.log(`Todoの初期化処理に失敗しました。\r\nex : ${ex}`)
         }
-        catch (ex) {
-            alert('Todoの再読み込みに失敗しました。\r\nページを更新してください。');
-            console.log(`Todoの初期化処理に失敗しました。\r\nex : ${ex}`);
-        }
+    }
+
+    /**
+     * フィルター種別変更通知を受け取ってTodoリストを再取得する
+     * @param ev <select>要素のonChangeイベント
+     */
+    onChangeTodoSelector = async (ev: any): Promise<void> => {
+        const filter = ev.target.value
+        this.setState({ todoFilter: filter })
+        await this.initialize(filter)
     }
 }
