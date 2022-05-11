@@ -25,7 +25,10 @@ public class TodoController : ControllerBase
     {
         try
         {
-            var todos = (await context.Todos.ToListAsync()).Select(x => DTO.Todo.From(x)).ToList();
+            var todos = (await context.Todos.ToListAsync())
+                .Select(x => DTO.Todo.From(x))
+                .OrderByDescending(x => x.Id)
+                .ToList();
             return Ok(todos);
         }
         catch (Exception ex)
@@ -43,6 +46,7 @@ public class TodoController : ControllerBase
         {
             var todos = (await context.Todos.Where(x => x.DoneAt == null).ToListAsync())
                 .Select(x => DTO.Todo.From(x))
+                .OrderByDescending(x => x.Id)
                 .ToList();
             return Ok(todos);
         }
@@ -61,6 +65,7 @@ public class TodoController : ControllerBase
         {
             var todos = (await context.Todos.Where(x => x.DoneAt != null).ToListAsync())
                 .Select(x => DTO.Todo.From(x))
+                .OrderByDescending(x => x.Id)
                 .ToList();
             return Ok(todos);
         }
@@ -73,7 +78,7 @@ public class TodoController : ControllerBase
 
     [HttpPost(Name = "CreateTodo")]
     [Produces("application/json")]
-    public async Task<IActionResult> Create([MaxLength(100)]string content, [Required]DateTime dueDate)
+    public async Task<IActionResult> Create(DTO.Todo dto)
     {
         if (!ModelState.IsValid)
         {
@@ -84,9 +89,9 @@ public class TodoController : ControllerBase
         {
             await context.Todos.AddAsync(new Models.Todo
             {
-                Content = content,
+                Content = dto.Content,
                 Created = DateTime.UtcNow,
-                DueDate = dueDate,
+                DueDate = dto.DueDate.ToDateTime(),
             });
             await context.SaveChangesAsync();
         }
@@ -101,11 +106,7 @@ public class TodoController : ControllerBase
 
     [HttpPatch(Name = "UpdateTodo")]
     [Produces("application/json")]
-    public async Task<IActionResult> Update(
-        [Required]int id,
-        [MaxLength(100)]string content,
-        [Required]DateTime dueDate,
-        DateTime? DoneAt)
+    public async Task<IActionResult> Update(DTO.Todo dto)
     {
         if (!ModelState.IsValid)
         {
@@ -114,10 +115,10 @@ public class TodoController : ControllerBase
 
         try
         {
-            var todo = await context.Todos.SingleAsync(x => x.Id == id);
-            todo.Content = content;
-            todo.DueDate = dueDate;
-            todo.DoneAt = DoneAt;
+            var todo = await context.Todos.SingleAsync(x => x.Id == dto.Id);
+            todo.Content = dto.Content;
+            todo.DueDate = dto.DueDate.ToDateTime();
+            todo.DoneAt = dto.DoneAt?.ToDateTime();
             await context.SaveChangesAsync();
         }
         catch (Exception ex)
@@ -131,8 +132,7 @@ public class TodoController : ControllerBase
 
     [HttpDelete(Name = "DeleteTodo")]
     [Produces("application/json")]
-    public async Task<IActionResult> Delete(
-        [Required]int id)
+    public async Task<IActionResult> Delete([Required]int id)
     {
         try
         {
