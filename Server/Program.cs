@@ -3,12 +3,22 @@ using Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+const string corsName = "ReactWebApp";
+
 // Add services to the container.
 
 builder.Services.AddCors(options =>
-    options.AddPolicy("ReactWebApp", policy =>
+    options.AddPolicy(corsName, policy =>
     {
-        policy.WithOrigins("http://localhost:3000");
+        if (builder.Environment.IsProduction())
+        {
+            policy.AllowAnyOrigin();
+        }
+        else
+        {
+            policy.WithOrigins("http://localhost:3000");
+        }
+
         policy.WithHeaders(new []
         {
             "Content-Type",
@@ -41,7 +51,7 @@ if (app.Environment.IsDevelopment())
 // http接続時のhttpsへのリダイレクト無効化
 // app.UseHttpsRedirection();
 
-app.UseCors("ReactWebApp");
+app.UseCors(corsName);
 
 app.UseAuthorization();
 
