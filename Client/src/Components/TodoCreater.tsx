@@ -37,16 +37,44 @@ export default class TodoCreater extends
     render () {
         const today = new Date()
         return (
-            <div className='container-fluid'>
-                <div className='row'>
-                    <div className='col-sm'>
-                        <textarea className='form-control' style={({ height: '1rem' })} onChange={this.onChangeContent}></textarea>
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-sm">
+                        <div className="position-relative">
+                            {/* テキストエリア */}
+                            <textarea
+                                className={`form-control ${this.state.content.length > 100 ? 'is-invalid' : ''}`}
+                                style={({
+                                    boxSizing: 'border-box',
+                                    height: '1rem'
+                                })}
+                                defaultValue={this.state.content}
+                                onChange={this.onChangeContent} >
+                            </textarea>
+                            {/* テキストエリアの入力文字数表記 */}
+                            <div className={'position-absolute pe-none text-black-50 w-auto m-2'}
+                                style={({ position: 'absolute', right: '.2rem', bottom: '0rem' })}>
+                                <label>{`${this.state.content.length} / 100`}</label>
+                            </div>
+                        </div>
                     </div>
-                    <div className='col-auto ps-2'>
-                        <DatePicker onChange={this.onChangeDate} defaultValue={new Date(today.getFullYear(), today.getMonth(), today.getDate())}></DatePicker>
+                    <div className="col-auto">
+                        <div className="dropdown">
+                            <button className="btn btn-secondary dropdown-toggle" type="button" id="dueDateDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+                                予定日
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dueDateDropDown" style={({ minWidth: '15rem' })}>
+                                <li className="p-2">
+                                    <DatePicker onChange={this.onChangeDate} defaultValue={new Date(today.getFullYear(), today.getMonth(), today.getDate())} />
+                                </li>
+                            </ul>
+                        </div>
+                        {/* <label>予定日</label> */}
                     </div>
-                    <div className='col-auto ps-2'>
-                        <button type='button' className='btn btn-primary' onClick={this.createTodo}>追加</button>
+                    <div className="col-auto">
+                        <div>
+                            <button type="button" className="btn btn-primary" onClick={this.createTodo}>追加</button>
+                        </div>
                     </div>
                 </div>
             </div>

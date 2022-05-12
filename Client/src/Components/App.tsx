@@ -1,6 +1,5 @@
-import './App.css'
-import TodoApp from './Todo'
 import React from 'react'
+import TodoApp from './Todo'
 
 class App extends React.Component {
     constructor (props: {}) {
