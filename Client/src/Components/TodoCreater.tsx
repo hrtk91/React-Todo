@@ -40,13 +40,16 @@ export default class TodoCreater extends
             <div className='container-fluid'>
                 <div className='row'>
                     <div className='col-sm'>
-                        <textarea className='form-control' style={({ height: '1rem' })} onChange={this.onChangeContent}></textarea>
+                        <textarea className='form-control h-100' style={({ height: '1rem' })} onChange={this.onChangeContent}></textarea>
                     </div>
-                    <div className='col-auto ps-2'>
+                    <div className='col-auto'>
+                        <label>予定日</label>
                         <DatePicker onChange={this.onChangeDate} defaultValue={new Date(today.getFullYear(), today.getMonth(), today.getDate())}></DatePicker>
                     </div>
-                    <div className='col-auto ps-2'>
-                        <button type='button' className='btn btn-primary' onClick={this.createTodo}>追加</button>
+                    <div className='col-auto'>
+                        <div className='d-flex align-items-end h-100'>
+                            <button type='button' className='btn btn-primary' onClick={this.createTodo}>追加</button>
+                        </div>
                     </div>
                 </div>
             </div>
