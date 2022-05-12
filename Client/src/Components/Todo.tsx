@@ -1,8 +1,8 @@
 import React from 'react'
-import TodoCreater from './Components/TodoCreater'
-import TodoItem from './Components/TodoItem'
-import Todo from './Models/Todo'
-import TodoService from './Services/TodoService'
+import TodoCreater from './TodoCreater'
+import TodoItem from './TodoItem'
+import Todo from '../Models/Todo'
+import TodoService from '../Services/TodoService'
 
 /**
  * TodoクラスのProps型
