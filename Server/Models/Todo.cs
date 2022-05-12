@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Server.Models;
@@ -10,7 +9,6 @@ public class Todo
 
     [Required]
     [MaxLength(100)]
-    [DefaultValue("")]
     public string Content { get; set; } = string.Empty;
 
     [Required]

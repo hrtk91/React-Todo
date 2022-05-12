@@ -1,4 +1,4 @@
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Server.DTO;
 
@@ -6,14 +6,15 @@ public class Todo
 {
     public int Id { get; set; }
 
-    [DefaultValue("")]
+    [Required]
+    [MaxLength(100)]
     public string Content { get; set; } = string.Empty;
 
-    public DateTime DueDate { get; set; } = DateTime.Today;
+    public DateObject DueDate { get; set; } = new DateObject(DateTime.Today);
 
-    public DateTime Created { get; set; } = DateTime.Now;
+    public DateObject Created { get; set; } = new DateObject(DateTime.Now);
 
-    public DateTime? DoneAt { get; set; }
+    public DateObject? DoneAt { get; set; } = null;
 
     public static DTO.Todo From(Models.Todo todo)
     {
@@ -21,9 +22,9 @@ public class Todo
         {
             Id = todo.Id,
             Content = todo.Content,
-            DueDate = todo.DueDate,
-            Created = todo.Created,
-            DoneAt = todo.DoneAt,
+            DueDate = new DateObject(todo.DueDate),
+            Created = new DateObject(todo.Created),
+            DoneAt = todo.DoneAt is DateTime doneAt ? new DateObject(doneAt) : null,
         };
     }
 }
