@@ -9,14 +9,9 @@ on:
       - release
   workflow_dispatch:
 
-#defaults:
-#  run:
-#    working-directory: ./Server
-
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -26,15 +21,12 @@ jobs:
           dotnet-version: '6.0.x'
           include-prerelease: true
 
-      - name: check cd
-        run: pwd
-      - name: check ls
-        run: ls
-
       - name: Build with dotnet
+        working-directory: ./Server
         run: dotnet build --configuration Release
 
       - name: dotnet publish
+        working-directory: ./Server
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
