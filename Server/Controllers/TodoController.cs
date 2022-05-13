@@ -5,20 +5,38 @@ using Server.Data;
 
 namespace Server.Controllers;
 
+/// <summary>
+/// TodoApiコントローラー
+/// </summary>
 [ApiController]
 [Route("[controller]/[action]")]
 public class TodoController : ControllerBase
 {
+    /// <summary>
+    /// ロガー
+    /// </summary>
     ILogger<TodoController> logger { get; }
 
+    /// <summary>
+    /// TodoDBコンテキスト
+    /// </summary>
     ApplicationDbContext context { get; }
 
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    /// <param name="logger">ロガー</param>
+    /// <param name="context">TodoDBコンテキスト</param>
     public TodoController(ILogger<TodoController> logger, ApplicationDbContext context)
     {
         this.logger = logger;
         this.context = context;
     }
 
+    /// <summary>
+    /// DBから全Todoを取得します
+    /// </summary>
+    /// <returns>すべてのTodo</returns>
     [HttpGet(Name = "GetAllTodo")]
     [Produces("application/json")]
     public async Task<ActionResult<IEnumerable<DTO.Todo>>> GetAll()
@@ -38,6 +56,10 @@ public class TodoController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// DBから未完了のTodoのみを取得します
+    /// </summary>
+    /// <returns>未完了のTodo</returns>
     [HttpGet(Name = "GetNotCompletedTodo")]
     [Produces("application/json")]
     public async Task<ActionResult<IEnumerable<DTO.Todo>>> GetNotCompleted()
@@ -57,6 +79,10 @@ public class TodoController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// DBから完了したTodoのみを取得します
+    /// </summary>
+    /// <returns>完了したTodo</returns>
     [HttpGet(Name = "GetCompletedTodo")]
     [Produces("application/json")]
     public async Task<ActionResult<IEnumerable<DTO.Todo>>> GetCompleted()
@@ -76,6 +102,11 @@ public class TodoController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Todoを作成します
+    /// </summary>
+    /// <param name="dto">Todoのデータ</param>
+    /// <returns>処理結果</returns>
     [HttpPost(Name = "CreateTodo")]
     [Produces("application/json")]
     public async Task<IActionResult> Create(DTO.Todo dto)
@@ -104,6 +135,11 @@ public class TodoController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Todoを更新します
+    /// </summary>
+    /// <param name="dto">Todoのデータ</param>
+    /// <returns>処理結果</returns>
     [HttpPatch(Name = "UpdateTodo")]
     [Produces("application/json")]
     public async Task<IActionResult> Update(DTO.Todo dto)
@@ -130,6 +166,11 @@ public class TodoController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Todoを削除します
+    /// </summary>
+    /// <param name="id">削除するTodoのID</param>
+    /// <returns>処理結果</returns>
     [HttpDelete(Name = "DeleteTodo")]
     [Produces("application/json")]
     public async Task<IActionResult> Delete([Required]int id)
