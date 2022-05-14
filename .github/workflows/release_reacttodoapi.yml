@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v2
 
@@ -22,11 +23,9 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        working-directory: ./Server
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        working-directory: ./Server
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
@@ -54,5 +53,5 @@ jobs:
         with:
           app-name: 'ReactTodoApi'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3AEC14057A9D4865B51B7720889123D8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D67A5E0C7CCE4407A24D9B79ACEBE2D4 }}
           package: .
