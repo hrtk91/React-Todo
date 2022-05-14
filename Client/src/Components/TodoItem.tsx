@@ -261,10 +261,9 @@ export default class TodoItem extends React.Component<IProps, IState> {
         const doneAt = this.state.doneAt
         const dueDate = this.state.dueDate
         const today = (new Date())
-        return doneAt == null &&
-            (dueDate.getFullYear() < today.getFullYear() ||
-            dueDate.getMonth() < today.getMonth() ||
-            (dueDate.getMonth() === today.getMonth() && dueDate.getDate() < today.getDate()))
+        const dueDateStr = Number.parseInt(`${dueDate.getFullYear()}${`00${dueDate.getMonth()}`.slice(-2)}${`00${dueDate.getDate()}`.slice(-2)}`)
+        const todayStr = Number.parseInt(`${today.getFullYear()}${`00${today.getMonth()}`.slice(-2)}${`00${today.getDate()}`.slice(-2)}`)
+        return (doneAt == null) && (dueDateStr < todayStr)
     }
 
     /**
