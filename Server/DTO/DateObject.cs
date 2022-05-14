@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Server.DTO;
 
 /// <summary>
@@ -69,4 +71,56 @@ public class DateObject
     /// <returns>DateTimeオブジェクト</returns>
     public DateTime ToDateTime()
         => new DateTime(this.Year, this.Month, this.Day, this.Hour, this.Minute, this.Second, this.MilliSecond);
+
+    /// <summary>
+    /// DateObjectプロパティの検証属性
+    /// </summary>
+    public class ValidateAttribute : ValidationAttribute
+    {
+        /// <summary>
+        /// nullable宣言されたプロパティか
+        /// </summary>
+        private bool IsNullable { get; set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="isNullable">属性の適用先がnullableか</param>
+        public ValidateAttribute(bool isNullable = false)
+        {
+            this.IsNullable = isNullable;
+        }
+
+        /// <summary>
+        /// DateObjectがDateTimeに変換可能か検証し、変換可能な場合trueを返します。<br/>
+        /// ただし、isNullableがtrueでプロパティがnullの場合にもtrueを返します。
+        /// </summary>
+        /// <param name="value">属性の付与先プロパティ</param>
+        /// <returns>検証結果</returns>
+        public override bool IsValid(object? value)
+        {
+            // IsNullableがtrueの場合、null値は検証OK
+            if (value is null)
+            {
+                return IsNullable;
+            }
+
+            // DateObjectプロパティに付与されていなければ検証NG
+            if (value is not DateObject dObj)
+            {
+                return false;
+            }
+
+            // DateTime型に変換できれば検証OK
+            try
+            {
+                dObj.ToDateTime();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+    }
 }

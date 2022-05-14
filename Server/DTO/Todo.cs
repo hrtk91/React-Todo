@@ -16,12 +16,15 @@ public class Todo
     public string Content { get; set; } = string.Empty;
 
     /// <summary>予定日</summary>
+    [DateObject.Validate]
     public DateObject DueDate { get; set; } = new DateObject(DateTime.Today);
 
     /// <summary>作成日</summary>
+    [DateObject.Validate]
     public DateObject Created { get; set; } = new DateObject(DateTime.Now);
 
     /// <summary>完了日</summary>
+    [DateObject.Validate(true)]
     public DateObject? DoneAt { get; set; } = null;
 
     /// <summary>
