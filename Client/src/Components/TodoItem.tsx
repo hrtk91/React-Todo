@@ -264,7 +264,7 @@ export default class TodoItem extends React.Component<IProps, IState> {
         return doneAt == null &&
             (dueDate.getFullYear() < today.getFullYear() ||
             dueDate.getMonth() < today.getMonth() ||
-            dueDate.getDate() < today.getDate())
+            (dueDate.getMonth() === today.getMonth() && dueDate.getDate() < today.getDate()))
     }
 
     /**
