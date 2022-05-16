@@ -8,6 +8,10 @@ https://nice-mud-06037a900.1.azurestaticapps.net/
 ## システム構成図
 ![システム構成図](https://user-images.githubusercontent.com/13842793/168418718-00cf7131-a965-425c-998c-ca0bb6fa82a3.png)  
 
+## ブランチ構成
+*develop* -- 開発中のコードをコミットするブランチ
+*release* -- 動作確認したコードをデプロイするブランチ
+
 ## リポジトリ構成
 *Client* -- Reactで作成したクライアント側のコード  
 *Database* -- ローカルデバッグ用DBのDockerファイル(※デプロイ対象外)  
