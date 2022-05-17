@@ -21,11 +21,11 @@ public class Todo
 
     /// <summary>作成日</summary>
     [DateObject.Validate]
-    public DateObject Created { get; set; } = new DateObject(DateTime.Now);
+    public DateObject CreatedDate { get; set; } = new DateObject(DateTime.Now);
 
     /// <summary>完了日</summary>
     [DateObject.Validate(true)]
-    public DateObject? DoneAt { get; set; } = null;
+    public DateObject? CompletionDate { get; set; } = null;
 
     /// <summary>
     /// TodoモデルからTodoのDTOに変換します
@@ -39,8 +39,8 @@ public class Todo
             Id = todo.Id,
             Content = todo.Content,
             DueDate = new DateObject(todo.DueDate),
-            Created = new DateObject(todo.Created),
-            DoneAt = todo.DoneAt is DateTime doneAt ? new DateObject(doneAt) : null,
+            CreatedDate = new DateObject(todo.CreatedDate),
+            CompletionDate = todo.CompletionDate is DateTime completionDate ? new DateObject(completionDate) : null,
         };
     }
 }

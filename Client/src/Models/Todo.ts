@@ -11,17 +11,17 @@ export default class Todo {
     /** 予定日 */
     dueDate: Date
     /** 作成日 */
-    created: Date
+    createdDate: Date
     /** 完了日 */
-    doneAt: Date | null
+    completionDate: Date | null
 
     /** コンストラクタ */
-    constructor (id: number, content: string, dueDate: Date, created: Date, doneAt: Date | null) {
+    constructor (id: number, content: string, dueDate: Date, createdDate: Date, completionDate: Date | null) {
         this.id = id
         this.content = content
-        this.created = created
+        this.createdDate = createdDate
         this.dueDate = dueDate
-        this.doneAt = doneAt
+        this.completionDate = completionDate
     }
 
     /**
@@ -36,10 +36,10 @@ export default class Todo {
                 dto.id,
                 dto.content,
                 dto.dueDate.toLocaleDate(),
-                dto.created.toLocaleDate(),
-                dto.doneAt != null
-                    ? dto.doneAt.toLocaleDate()
-                    : dto.doneAt)
-            : new Todo(dto.id, dto.content, dto.dueDate.toUTCDate(), dto.created.toUTCDate(), dto.doneAt?.toUTCDate() ?? null)
+                dto.createdDate.toLocaleDate(),
+                dto.completionDate != null
+                    ? dto.completionDate.toLocaleDate()
+                    : dto.completionDate)
+            : new Todo(dto.id, dto.content, dto.dueDate.toUTCDate(), dto.createdDate.toUTCDate(), dto.completionDate?.toUTCDate() ?? null)
     }
 }

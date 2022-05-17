@@ -26,10 +26,10 @@ interface IProps {
     content: string,
     /** Todo.dueDate */
     dueDate: Date,
-    /** Todo.doneAt */
-    doneAt: Date | null,
-    /** Tood.created */
-    created: Date,
+    /** Todo.completionDate */
+    completionDate: Date | null,
+    /** Tood.createdDate */
+    createdDate: Date,
     /** 更新ボタンの有効状態 */
     disableUpdateBtn: boolean,
 }
@@ -46,8 +46,8 @@ export default class TodoItem extends React.Component<IProps, IState> {
             id: 0,
             content: '',
             dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-            doneAt: null,
-            created: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+            completionDate: null,
+            createdDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
             disableUpdateBtn: true
         }
     }
@@ -61,8 +61,8 @@ export default class TodoItem extends React.Component<IProps, IState> {
             id: this.props.todo.id,
             content: this.props.todo.content,
             dueDate: this.props.todo.dueDate,
-            doneAt: this.props.todo.doneAt,
-            created: this.props.todo.created
+            completionDate: this.props.todo.completionDate,
+            createdDate: this.props.todo.createdDate
         })
     }
 
@@ -131,11 +131,11 @@ export default class TodoItem extends React.Component<IProps, IState> {
                                     id={`doneCheck${this.state.id}`}
                                     autoComplete="off"
                                     onChange={this.onChangeDoneCheck}
-                                    defaultChecked={this.props.todo.doneAt != null} />
+                                    defaultChecked={this.props.todo.completionDate != null} />
                                 <label className="ps-1" htmlFor={`doneCheck${this.state.id}`}>
                                     {
-                                        this.state.doneAt != null
-                                            ? `${this.state.doneAt?.getFullYear()} / ${this.state.doneAt?.getMonth() + 1} / ${this.state.doneAt?.getDate()}`
+                                        this.state.completionDate != null
+                                            ? `${this.state.completionDate?.getFullYear()} / ${this.state.completionDate?.getMonth() + 1} / ${this.state.completionDate?.getDate()}`
                                             : '---- / -- / --'
                                     }
                                 </label>
@@ -144,7 +144,7 @@ export default class TodoItem extends React.Component<IProps, IState> {
                         {/* 作成日 */}
                         <div className="mt-3">
                             <label>作成日</label>
-                            <DatePicker defaultValue={this.props.todo.created} small={true} disabled={true}></DatePicker>
+                            <DatePicker defaultValue={this.props.todo.createdDate} small={true} disabled={true}></DatePicker>
                         </div>
                     </div>
                 </div>
@@ -158,7 +158,7 @@ export default class TodoItem extends React.Component<IProps, IState> {
      * @param content テキストエリアの内容
      */
     onChangeContent = (content: string): void => {
-        const hasUpdate = this.hasUpdate(content, this.state.dueDate, this.state.doneAt)
+        const hasUpdate = this.hasUpdate(content, this.state.dueDate, this.state.completionDate)
         this.setState({
             content,
             disableUpdateBtn: !hasUpdate
@@ -171,7 +171,7 @@ export default class TodoItem extends React.Component<IProps, IState> {
      * @param newLocaleDate 変更後のDueDate
      */
     onChangeDueDate = (newLocaleDate: Date): void => {
-        const hasUpdate = this.hasUpdate(this.state.content, newLocaleDate, this.state.doneAt)
+        const hasUpdate = this.hasUpdate(this.state.content, newLocaleDate, this.state.completionDate)
         this.setState({
             dueDate: newLocaleDate,
             disableUpdateBtn: !hasUpdate
@@ -186,11 +186,11 @@ export default class TodoItem extends React.Component<IProps, IState> {
     onChangeDoneCheck = (ev: any): void => {
         const checked = ev.target.checked
         const today = new Date()
-        const doneAt = checked ? new Date(today.getFullYear(), today.getMonth(), today.getDate()) : null
-        const hasUpdate = this.hasUpdate(this.state.content, this.state.dueDate, doneAt)
+        const completionDate = checked ? new Date(today.getFullYear(), today.getMonth(), today.getDate()) : null
+        const hasUpdate = this.hasUpdate(this.state.content, this.state.dueDate, completionDate)
 
         this.setState({
-            doneAt,
+            completionDate,
             disableUpdateBtn: !hasUpdate
         })
     }
@@ -205,8 +205,8 @@ export default class TodoItem extends React.Component<IProps, IState> {
                 this.state.id,
                 this.state.content,
                 this.state.dueDate,
-                this.state.created,
-                this.state.doneAt
+                this.state.createdDate,
+                this.state.completionDate
             ))
             this.setState({ disableUpdateBtn: true })
             this.props.onUpdateTodo?.(this.state.id)
@@ -240,26 +240,26 @@ export default class TodoItem extends React.Component<IProps, IState> {
      * @returns true: 予定日を過ぎている, false: 予定日を過ぎていない
      */
     isExpired = (): boolean => {
-        const doneAt = this.state.doneAt
+        const completionDate = this.state.completionDate
         const dueDate = this.state.dueDate
         const today = (new Date())
         const dueDateStr = Number.parseInt(`${dueDate.getFullYear()}${`00${dueDate.getMonth()}`.slice(-2)}${`00${dueDate.getDate()}`.slice(-2)}`)
         const todayStr = Number.parseInt(`${today.getFullYear()}${`00${today.getMonth()}`.slice(-2)}${`00${today.getDate()}`.slice(-2)}`)
-        return (doneAt == null) && (dueDateStr < todayStr)
+        return (completionDate == null) && (dueDateStr < todayStr)
     }
 
     /**
      * Todoが変更されているか確認する
      * @param content Todo.content
      * @param dueDate Todo.dueDate
-     * @param doneAt Todo.doneAt
+     * @param completionDate Todo.completionDate
      * @returns true: 変更あり, false: 変更なし
      */
-    hasUpdate = (content: string, dueDate: Date, doneAt: Date | null): boolean => {
+    hasUpdate = (content: string, dueDate: Date, completionDate: Date | null): boolean => {
         const hasUpdateContent = content !== this.props.todo.content
         const hasUpdateDueDate = this.hasUpdateDate(dueDate, this.props.todo.dueDate)
-        const hasUpdateDoneAt = this.hasUpdateDate(doneAt, this.props.todo.doneAt)
-        return (hasUpdateContent || hasUpdateDueDate || hasUpdateDoneAt)
+        const hasUpdateCompletionDate = this.hasUpdateDate(completionDate, this.props.todo.completionDate)
+        return (hasUpdateContent || hasUpdateDueDate || hasUpdateCompletionDate)
     }
 
     /**

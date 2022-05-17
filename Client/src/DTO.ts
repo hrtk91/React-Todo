@@ -106,9 +106,9 @@ export interface ITodo {
     /** 予定日 */
     dueDate: DateObject
     /** 作成日 */
-    created: DateObject
+    createdDate: DateObject
     /** 完了日 */
-    doneAt: DateObject | null
+    completionDate: DateObject | null
 }
 
 /**
@@ -123,9 +123,9 @@ export class Todo implements ITodo {
     /** 予定日 */
     dueDate: DateObject
     /** 作成日 */
-    created: DateObject
+    createdDate: DateObject
     /** 完了日 */
-    doneAt: DateObject | null
+    completionDate: DateObject | null
 
     /** コンストラクタ */
     constructor (data: ITodo) {
@@ -136,9 +136,9 @@ export class Todo implements ITodo {
         this.dueDate = new DateObject(data.dueDate)
 
         // interfaceからclassに変換
-        this.created = new DateObject(data.created)
+        this.createdDate = new DateObject(data.createdDate)
 
         // interfaceからclassに変換
-        this.doneAt = data.doneAt != null ? new DateObject(data.doneAt) : null
+        this.completionDate = data.completionDate != null ? new DateObject(data.completionDate) : null
     }
 }
