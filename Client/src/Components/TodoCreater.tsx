@@ -1,6 +1,7 @@
 import React from 'react'
 import TodoService from '../Services/TodoService'
 import DatePicker from './DatePicker'
+import TextArea from './TextArea'
 
 /**
  * TodoCreaterのProps型
@@ -16,6 +17,7 @@ interface IProps {
  interface IState {
     content: string,
     dueDate: Date,
+    textArea: React.RefObject<TextArea>
 }
 
 /**
@@ -29,7 +31,8 @@ export default class TodoCreater extends
         const today = new Date()
         this.state = {
             content: '',
-            dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate())
+            dueDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+            textArea: React.createRef()
         }
     }
 
@@ -40,22 +43,8 @@ export default class TodoCreater extends
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-sm">
-                        <div className="position-relative">
-                            {/* テキストエリア */}
-                            <textarea
-                                className={`form-control ${this.state.content.length > 100 ? 'is-invalid' : ''}`}
-                                style={({
-                                    boxSizing: 'border-box',
-                                    height: '1rem'
-                                })}
-                                defaultValue={this.state.content}
-                                onChange={this.onChangeContent} >
-                            </textarea>
-                            {/* テキストエリアの入力文字数表記 */}
-                            <div className={'position-absolute pe-none text-black-50 w-auto m-2'}
-                                style={({ position: 'absolute', right: '.2rem', bottom: '0rem' })}>
-                                <label>{`${this.state.content.length} / 100`}</label>
-                            </div>
+                        <div>
+                            <TextArea ref={this.state.textArea} onChange={this.onChangeContent}/>
                         </div>
                     </div>
                     <div className="col-auto">
@@ -69,7 +58,6 @@ export default class TodoCreater extends
                                 </li>
                             </ul>
                         </div>
-                        {/* <label>予定日</label> */}
                     </div>
                     <div className="col-auto">
                         <div>
@@ -83,7 +71,7 @@ export default class TodoCreater extends
 
     /**
      * Todo作成処理  
-     * 成功した場合、props.onCreatedTodoを実行
+     * 成功した場合、テキストエリアを初期化してTodo作成のイベント通知を行う  
      */
     createTodo = async (): Promise<void> => {
         const content = this.state.content
@@ -91,6 +79,9 @@ export default class TodoCreater extends
 
         try {
             await TodoService.createTodo(content, dueDate)
+
+            this.state.textArea.current?.initContent()
+
             this.props.onCreatedTodo?.()
         } catch (ex) {
             alert('Todoの追加処理に失敗しました。\r\n以下の入力値となっていないか確認し、もう一度やり直してください。\r\n・空白\r\n・101文字以上')
@@ -102,9 +93,9 @@ export default class TodoCreater extends
     /**
      * テキストエリアの変更通知  
      * state.contentに反映する  
-     * @param ev テキストエリアのonChangeイベント
+     * @param value 変更後の内容
      */
-    onChangeContent = (ev: any): void => this.setState({ content: ev.target.value })
+    onChangeContent = (value: string): void => this.setState({ content: value })
 
     /**
      * 予定日の変更通知  

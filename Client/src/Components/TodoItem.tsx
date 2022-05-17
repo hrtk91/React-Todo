@@ -2,6 +2,7 @@ import React from 'react'
 import Todo from '../Models/Todo'
 import TodoService from '../Services/TodoService'
 import DatePicker from './DatePicker'
+import TextArea from './TextArea'
 
 /**
  * TodoItemクラスのProps型
@@ -109,33 +110,15 @@ export default class TodoItem extends React.Component<IProps, IState> {
                 {/* メイン */}
                 <div className='row pt-2 pb-2'>
                     {/* コンテンツ入力エリア */}
-                    <div className='d-inline-block align-top col-lg'>
-                        <div className="row">
-                            <div className='w-100'>
-                                <div style={({ position: 'relative' })}>
-                                    {/* Todo.contentのテキストエリア */}
-                                    <textarea
-                                        className={`form-control w-100 ${this.state.content.length > 100 ? 'is-invalid' : ''}`}
-                                        style={({
-                                            boxSizing: 'border-box',
-                                            minHeight: '7rem'
-                                        })}
-                                        defaultValue={this.state.content}
-                                        onChange={this.onChangeContent} >
-                                    </textarea>
-                                    {/* テキストエリアの入力文字数表記 */}
-                                    <div className={'pe-none text-black-50 w-auto m-2'}
-                                        style={({ position: 'absolute', right: '.2rem', bottom: '0rem' })}>
-                                        <label>{`${this.state.content.length} / 100`}</label>
-                                    </div>
-                                </div>
-                            </div>
+                    <div className='d-inline-block col-lg'>
+                        <div className="w-100 h-100">
+                            <TextArea defaultValue={this.props.todo.content} onChange={this.onChangeContent} />
                         </div>
                     </div>
                     {/* 日付関連エリア */}
                     <div className='d-inline-block col-auto'>
                         {/* 予定日 */}
-                        <div className="">
+                        <div>
                             <label>予定日</label>
                             <DatePicker defaultValue={this.props.todo.dueDate} onChange={this.onChangeDueDate}></DatePicker>
                         </div>
@@ -171,11 +154,10 @@ export default class TodoItem extends React.Component<IProps, IState> {
 
     /**
      * Todo.contentの変更通知  
-     * props.todoと比較して変更があれば「更新」ボタンを有効化する
-     * @param ev テキストエリアのonChangeイベント
+     * props.todoと比較して変更があれば「更新」ボタンを有効化する  
+     * @param content テキストエリアの内容
      */
-    onChangeContent = (ev: any): void => {
-        const content = ev.target.value
+    onChangeContent = (content: string): void => {
         const hasUpdate = this.hasUpdate(content, this.state.dueDate, this.state.doneAt)
         this.setState({
             content,
