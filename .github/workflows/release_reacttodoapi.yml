@@ -25,10 +25,6 @@ jobs:
         working-directory: ./Server
         run: dotnet build --configuration Release
 
-      - name: Migration
-        working-directory: ./Server
-        run: dotonet ef database update
-
       - name: dotnet publish
         working-directory: ./Server
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
