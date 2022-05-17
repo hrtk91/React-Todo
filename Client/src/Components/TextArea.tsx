@@ -84,5 +84,8 @@ export default class TextArea
      * (デフォルトでは空文字を設定する)  
      * @param value 変更後の値
      */
-    initContent = (value: string = '') => this.setState({ content: value })
+    initContent = (value: string = '') => {
+        this.setState({ content: value })
+        this.props.onChange?.(value)
+    }
 }
