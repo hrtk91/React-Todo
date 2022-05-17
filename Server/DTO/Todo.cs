@@ -5,6 +5,11 @@ namespace Server.DTO;
 /// <summary>
 /// TodoのDTOクラス
 /// </summary>
+/// <remarks>
+/// 日付データは転送後のJavaScript上での扱いやすさの視点で独自のDateObject型を使用  
+/// JSではDate文字列の解釈がブラウザによってまちまちになるとMDNに記載があるため  
+/// 参考(3.タイムスタンプ文字列の項)：https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/Date
+/// </remarks>
 public class Todo
 {
     /// <summary>ID</summary>

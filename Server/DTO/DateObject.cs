@@ -5,6 +5,11 @@ namespace Server.DTO;
 /// <summary>
 /// 日時オブジェクトのDTOクラス
 /// </summary>
+/// <remarks>
+/// 日時は転送後のJavaScript上での扱いやすさの視点でint型を使用  
+/// JSではDate文字列の解釈がブラウザによってまちまちになるとMDNに記載があるため  
+/// 参考(3.タイムスタンプ文字列の項)：https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/Date
+/// </remarks>
 public class DateObject
 {
     /// <summary>年</summary>
