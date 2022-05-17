@@ -74,7 +74,7 @@ public class TodoController : ControllerBase
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Todoの全取得に失敗しました。");
+            logger.LogError(ex, "未完了Todoのみの取得に失敗しました。");
             throw;
         }
     }
@@ -97,7 +97,7 @@ public class TodoController : ControllerBase
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Todoの全取得に失敗しました。");
+            logger.LogError(ex, "完了済みTodoのみの取得に失敗しました。");
             throw;
         }
     }
