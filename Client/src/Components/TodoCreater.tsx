@@ -48,19 +48,11 @@ export default class TodoCreater extends
                         </div>
                     </div>
                     <div className="col-auto">
-                        <div className="dropdown">
-                            <button className="btn btn-secondary dropdown-toggle" type="button" id="dueDateDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-                                予定日
-                            </button>
-                            <ul className="dropdown-menu" aria-labelledby="dueDateDropDown" style={({ minWidth: '15rem' })}>
-                                <li className="p-2">
-                                    <DatePicker onChange={this.onChangeDate} defaultValue={new Date(today.getFullYear(), today.getMonth(), today.getDate())} />
-                                </li>
-                            </ul>
-                        </div>
+                        <label>予定日</label>
+                        <DatePicker onChange={this.onChangeDate} defaultValue={new Date(today.getFullYear(), today.getMonth(), today.getDate())} />
                     </div>
                     <div className="col-auto">
-                        <div>
+                        <div className="pt-4">
                             <button type="button" className="btn btn-primary" onClick={this.createTodo}>追加</button>
                         </div>
                     </div>
