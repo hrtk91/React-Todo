@@ -52,8 +52,8 @@ export default class TodoService {
             id: 0,
             content,
             dueDate: DTO.DateObject.fromDate(dueDate),
-            created: DTO.DateObject.fromDate(new Date()),
-            doneAt: null
+            createdDate: DTO.DateObject.fromDate(new Date()),
+            completionDate: null
         }
         await Axios.post('/Todo/Create', dto)
     }
@@ -67,8 +67,8 @@ export default class TodoService {
             id: todo.id,
             content: todo.content,
             dueDate: DTO.DateObject.fromDate(todo.dueDate),
-            created: DTO.DateObject.fromDate(todo.created),
-            doneAt: todo.doneAt != null ? DTO.DateObject.fromDate(todo.doneAt) : null
+            createdDate: DTO.DateObject.fromDate(todo.createdDate),
+            completionDate: todo.completionDate != null ? DTO.DateObject.fromDate(todo.completionDate) : null
         }
         await Axios.patch('/Todo/Update', dto)
     }

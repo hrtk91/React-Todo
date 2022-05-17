@@ -66,7 +66,7 @@ public class TodoController : ControllerBase
     {
         try
         {
-            var todos = (await context.Todos.Where(x => x.DoneAt == null).ToListAsync())
+            var todos = (await context.Todos.Where(x => x.CompletionDate == null).ToListAsync())
                 .Select(x => DTO.Todo.From(x))
                 .OrderByDescending(x => x.Id)
                 .ToList();
@@ -74,7 +74,7 @@ public class TodoController : ControllerBase
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Todoの全取得に失敗しました。");
+            logger.LogError(ex, "未完了Todoのみの取得に失敗しました。");
             throw;
         }
     }
@@ -89,7 +89,7 @@ public class TodoController : ControllerBase
     {
         try
         {
-            var todos = (await context.Todos.Where(x => x.DoneAt != null).ToListAsync())
+            var todos = (await context.Todos.Where(x => x.CompletionDate != null).ToListAsync())
                 .Select(x => DTO.Todo.From(x))
                 .OrderByDescending(x => x.Id)
                 .ToList();
@@ -97,7 +97,7 @@ public class TodoController : ControllerBase
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Todoの全取得に失敗しました。");
+            logger.LogError(ex, "完了済みTodoのみの取得に失敗しました。");
             throw;
         }
     }
@@ -121,7 +121,7 @@ public class TodoController : ControllerBase
             await context.Todos.AddAsync(new Models.Todo
             {
                 Content = dto.Content,
-                Created = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
                 DueDate = dto.DueDate.ToDateTime(),
             });
             await context.SaveChangesAsync();
@@ -154,7 +154,7 @@ public class TodoController : ControllerBase
             var todo = await context.Todos.SingleAsync(x => x.Id == dto.Id);
             todo.Content = dto.Content;
             todo.DueDate = dto.DueDate.ToDateTime();
-            todo.DoneAt = dto.DoneAt?.ToDateTime();
+            todo.CompletionDate = dto.CompletionDate?.ToDateTime();
             await context.SaveChangesAsync();
         }
         catch (Exception ex)

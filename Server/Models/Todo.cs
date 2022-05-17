@@ -35,11 +35,11 @@ public class Todo
     /// </summary>
     /// <remarks>NotNull</remarks>
     [Required]
-    public DateTime Created { get; set; } = DateTime.Now;
+    public DateTime CreatedDate { get; set; } = DateTime.Now;
 
     /// <summary>
     /// 完了日
     /// </summary>
     /// <remarks>NotNull</remarks>
-    public DateTime? DoneAt { get; set; }
+    public DateTime? CompletionDate { get; set; }
 }
