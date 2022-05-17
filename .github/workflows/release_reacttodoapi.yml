@@ -27,7 +27,7 @@ jobs:
 
       - name: Migration
         working-directory: ./Server
-        run: dotnet ef database update
+        run: dotonet ef database update
 
       - name: dotnet publish
         working-directory: ./Server
